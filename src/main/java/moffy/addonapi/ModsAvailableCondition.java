@@ -50,8 +50,8 @@ public class ModsAvailableCondition implements ICondition{
 
         private final ResourceLocation name;
 
-        public Serializer(String modId){
-            this.name = new ResourceLocation(modId, "mods_available");
+        public Serializer(){
+            this.name = new ResourceLocation(AddonAPI.MODID, "mods_available");
         }
 
         @Override

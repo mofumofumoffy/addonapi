@@ -23,10 +23,7 @@ public class AddonAPI {
 
     private void setup(final FMLCommonSetupEvent event)
     {
-
-        for(AddonModuleProvider provider : AddonModuleRegistry.INSTANCE.getProviders()){
-            CraftingHelper.register(new ModsAvailableCondition.Serializer(provider.getModId()));
-        }
+        CraftingHelper.register(new ModsAvailableCondition.Serializer());
 
         for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules()){
             module.setup(event);
