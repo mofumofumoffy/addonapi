@@ -1,5 +1,7 @@
 package moffy.addonapi;
 
+import java.util.function.Supplier;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModList;
@@ -7,19 +9,19 @@ import net.minecraftforge.fml.ModList;
 public class RawAddonModule {
     private ResourceLocation name;
     private String label;
-    private Class<? extends AddonModule> handlerClass;
+    private Supplier<? extends AddonModule> handlerClassSupplier;
     private String[] requiredModIds;
     private boolean mandatory;
 
 
-    public RawAddonModule(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds){
-        this(name, label, handlerClass, requiredModIds, false);
+    public RawAddonModule(ResourceLocation name, String label, Supplier<? extends AddonModule> handlerClassSupplier, String[] requiredModIds){
+        this(name, label, handlerClassSupplier, requiredModIds, false);
     }
 
-    public RawAddonModule(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds, boolean mandatory){
+    public RawAddonModule(ResourceLocation name, String label, Supplier<? extends AddonModule> handlerClassSupplier, String[] requiredModIds, boolean mandatory){
         this.name = getCompatLocation(name);
         this.label = label;
-        this.handlerClass = handlerClass;
+        this.handlerClassSupplier = handlerClassSupplier;
         this.requiredModIds = requiredModIds;
         this.mandatory = mandatory;
     }
@@ -42,14 +44,14 @@ public class RawAddonModule {
         return new ResourceLocation(name.getNamespace(), "compat_"+name.getPath());
     }
 
-    public Class<? extends AddonModule> getHandlerClass() {
-        return handlerClass;
+    public Supplier<? extends AddonModule> getHandlerClassSupplier() {
+        return handlerClassSupplier;
     }
 
 
 
-    public void setHandlerClass(Class<? extends AddonModule> handlerClass) {
-        this.handlerClass = handlerClass;
+    public void setHandlerClassSupplier(Supplier<? extends AddonModule> handlerClassSupplier) {
+        this.handlerClassSupplier = handlerClassSupplier;
     }
 
 
@@ -64,7 +66,7 @@ public class RawAddonModule {
 
     LazyOptional<AddonModule> loadNewModule(){
         try{
-            AddonModule t = this.handlerClass.getDeclaredConstructor().newInstance();
+            AddonModule t = handlerClassSupplier.get();
             return LazyOptional.of(()->t);
         }catch(Exception e){
             return LazyOptional.empty();
