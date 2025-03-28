@@ -1,27 +1,23 @@
 package moffy.addonapi;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
-import net.minecraftforge.fml.ModList;
 
 public class ModsAvailableCondition implements ICondition{
 
     private final ResourceLocation name;
-    private final String[] required;
+    private final ResourceLocation requiredRawModule;
 
-    public ModsAvailableCondition(ResourceLocation name, String[] required){
+    public ModsAvailableCondition(ResourceLocation name, ResourceLocation requiredRawModule){
         this.name = name;
-        this.required = required;
+        this.requiredRawModule = requiredRawModule;
     }
 
     @Override
@@ -32,21 +28,20 @@ public class ModsAvailableCondition implements ICondition{
     @Override
     public boolean test(IContext context) {
         Map<ResourceLocation, ForgeConfigSpec.BooleanValue>compatSettings = AddonModuleRegistry.INSTANCE.getCompatSettings();
-        for(String requiredModId:required){
-            if(!ModList.get().isLoaded(requiredModId)){
-                return false;
-            }
 
-            for(Entry<ResourceLocation, ForgeConfigSpec.BooleanValue> compatEntry : compatSettings.entrySet()){
-                if(!compatEntry.getKey().getNamespace().equals(this.name.getNamespace())){
-                    continue;
-                }
+        Set<AddonModuleProvider> providers = AddonModuleRegistry.INSTANCE.getProviders();
 
-                if(compatEntry.getKey().getPath().equals("compat_"+requiredModId) && !compatEntry.getValue().get()){
-                    return false;
+        for(AddonModuleProvider provider : providers){
+            for(RawAddonModule rawAddonModule : provider.getRawAddonModules()){
+                if(rawAddonModule.getName().equals(requiredRawModule)){
+                    ForgeConfigSpec.BooleanValue isAvailable = compatSettings.get(requiredRawModule);
+                    if(!rawAddonModule.isModsLoaded() || !isAvailable.get()){
+                        return false;
+                    }
                 }
             }
         }
+        
         
         return true;
     }
@@ -61,17 +56,13 @@ public class ModsAvailableCondition implements ICondition{
 
         @Override
         public void write(JsonObject json, ModsAvailableCondition value) {
-            json.add("required", new JsonArray());
+            json.addProperty("required_raw_module", value.requiredRawModule.toString());
         }
 
         @Override
         public ModsAvailableCondition read(JsonObject json) {
-            List<String> requiredModIdList = new ArrayList<>();
-            JsonArray array = json.get("required").getAsJsonArray();
-            array.forEach(element->{
-                requiredModIdList.add(element.getAsString());
-            });
-            return new ModsAvailableCondition(name, requiredModIdList.stream().toArray(String[]::new));
+            String requiredRawModulePath = json.get("required_raw_module").getAsString();
+            return new ModsAvailableCondition(name, new ResourceLocation(requiredRawModulePath));
         }
 
         @Override

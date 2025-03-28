@@ -19,7 +19,7 @@ public class RawAddonModule {
     }
 
     public RawAddonModule(ResourceLocation name, String label, Supplier<? extends AddonModule> handlerClassSupplier, String[] requiredModIds, boolean mandatory){
-        this.name = getCompatLocation(name);
+        this.name = name;
         this.label = label;
         this.handlerClassSupplier = handlerClassSupplier;
         this.requiredModIds = requiredModIds;
@@ -38,10 +38,6 @@ public class RawAddonModule {
 
     public void setName(ResourceLocation name) {
         this.name = name;
-    }
-
-    public ResourceLocation getCompatLocation(ResourceLocation name){
-        return new ResourceLocation(name.getNamespace(), "compat_"+name.getPath());
     }
 
     public Supplier<? extends AddonModule> getHandlerClassSupplier() {

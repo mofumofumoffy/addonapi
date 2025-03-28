@@ -49,6 +49,8 @@ public final class AddonModuleRegistry {
         return this.loadedModules;
     }
 
+    
+
     Map<ResourceLocation, ForgeConfigSpec.BooleanValue> getCompatSettings() {
         return compats;
     }
