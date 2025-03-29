@@ -2,7 +2,7 @@
 
 🌐 Available languages: [日本語](README.jaJP.md)
 
-**AddonAPI** is a required library mod that provides an API for dynamically loading objects in addon mods based on the mods loaded by Forge. If a target mod is not loaded, only the extension elements related to that mod are excluded, allowing Minecraft to launch safely.
+**AddonAPI** is a library mod that provides an API for dynamically loading objects in addon mods based on the mods loaded by Forge. If a target mod is not loaded, only the extension elements related to that mod are excluded, allowing Minecraft to launch safely.
 
 ## Supported Version
 - Forge for Minecraft 1.20.1
