@@ -3,6 +3,7 @@ package moffy.addonapi;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -18,7 +19,9 @@ public class AddonAPI {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, ()->()->{
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        });
     }
 
     private void setup(final FMLCommonSetupEvent event)
