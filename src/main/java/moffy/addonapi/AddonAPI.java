@@ -16,18 +16,21 @@ public class AddonAPI {
     public static final String MODID = "addonapi";
 
     public AddonAPI(){
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        this(FMLJavaModLoadingContext.get());
+    }
+
+    public AddonAPI(FMLJavaModLoadingContext context){
+        context.getModEventBus().addListener(this::setup);
+        context.getModEventBus().addListener(this::enqueueIMC);
+        context.getModEventBus().addListener(this::processIMC);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, ()->()->{
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+            context.getModEventBus().addListener(this::clientSetup);
         });
+        CraftingHelper.register(new ModsAvailableCondition.Serializer());
     }
 
     private void setup(final FMLCommonSetupEvent event)
     {
-        CraftingHelper.register(new ModsAvailableCondition.Serializer());
-
         for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules()){
             module.setup(event);
         }

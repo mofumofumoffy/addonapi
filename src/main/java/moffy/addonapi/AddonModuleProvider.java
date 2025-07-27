@@ -2,7 +2,6 @@ package moffy.addonapi;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -11,12 +10,12 @@ public abstract class AddonModuleProvider {
 
     public abstract void registerRawModules();
 
-    public void addRawModule(ResourceLocation name, String label, Supplier<? extends AddonModule> moduleClassSupplier, String[] requiredModIDs){
-        this.rawAddonModules.add(new RawAddonModule(name, label, moduleClassSupplier, requiredModIDs));
+    public void addRawModule(String name, String label, Class<? extends AddonModule> moduleClass, String[] requiredModIDs){
+        this.rawAddonModules.add(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs));
     }
 
-    public void addRawModule(ResourceLocation name, String label, Supplier<? extends AddonModule> moduleClassSupplier, String[] requiredModIDs, boolean mandatory){
-        this.rawAddonModules.add(new RawAddonModule(name, label, moduleClassSupplier, requiredModIDs, mandatory));
+    public void addRawModule(String name, String label, Class<? extends AddonModule> moduleClass, String[] requiredModIDs, boolean mandatory){
+        this.rawAddonModules.add(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs));
     }
 
     Set<RawAddonModule> getRawAddonModules() {
