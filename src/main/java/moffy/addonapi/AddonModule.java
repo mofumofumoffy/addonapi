@@ -1,50 +1,47 @@
 package moffy.addonapi;
 
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class AddonModule {
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
-    public AddonModule(){
-        init();
-        DistExecutor.unsafeRunWhenOn(
-            Dist.CLIENT,
-            () ->
-                () -> {
-                    initClient();
-                }
-        );
-    }
-    
-    public void init(){
+public interface AddonModule {
+    default void init(FMLJavaModLoadingContext context){
 
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void initClient(){
+    default void initClient(FMLJavaModLoadingContext context){
 
     }
 
-    public void setup(FMLCommonSetupEvent event){
+    default void setup(FMLCommonSetupEvent event){
        
     }
 
-    public void enqueueIMC(InterModEnqueueEvent event)
+    default void enqueueIMC(InterModEnqueueEvent event)
     {
 
     }
 
-    public void processIMC(InterModProcessEvent event)
+    default void processIMC(InterModProcessEvent event)
     {
         
     }
 
-    public void clientSetup(FMLClientSetupEvent event)
+    @OnlyIn(Dist.CLIENT)
+    default void clientSetup(FMLClientSetupEvent event)
     {
         
     }

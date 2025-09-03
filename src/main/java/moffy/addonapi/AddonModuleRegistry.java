@@ -4,10 +4,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.DistExecutor;
+
+import javax.annotation.Nullable;
 
 public final class AddonModuleRegistry {
     public static final AddonModuleRegistry INSTANCE = new AddonModuleRegistry();
@@ -22,16 +27,18 @@ public final class AddonModuleRegistry {
         providers = new HashSet<>();
     }
 
-    public void LoadModule(AddonModuleProvider provider, ForgeConfigSpec.Builder configBuilder){
+    public void LoadModule(AddonModuleProvider provider, @Nullable ForgeConfigSpec.Builder configBuilder){
 
         providers.add(provider);
         provider.registerRawModules();
         Set<RawAddonModule> rawModules = provider.getRawAddonModules();
 
-        configBuilder.comment("Provided by AddonAPI:", "Other Mod Compat Options").push("compat");
-        for(RawAddonModule rawAddonModule : rawModules){
-            if(!rawAddonModule.isMandatory()){
-                compats.put(rawAddonModule.getName(), configBuilder.define(rawAddonModule.getLabel(), true));
+        if(configBuilder != null){
+            configBuilder.comment("Provided by AddonAPI:", "Other Mod Compat Options").push("compat");
+            for(RawAddonModule rawAddonModule : rawModules){
+                if(!rawAddonModule.isMandatory()){
+                    compats.put(rawAddonModule.getName(), configBuilder.define(rawAddonModule.getLabel(), true));
+                }
             }
         }
 
@@ -39,7 +46,16 @@ public final class AddonModuleRegistry {
             if(rawAddonModule.isMandatory() || rawAddonModule.isModsLoaded()){
                 LazyOptional<AddonModule> addonModuleOptional = rawAddonModule.loadNewModule();
                 if(addonModuleOptional.isPresent()){
-                    loadedModules.add(addonModuleOptional.orElse(null));
+                    AddonModule addonModule = addonModuleOptional.orElseThrow(IllegalStateException::new);
+                    loadedModules.add(addonModule);
+                    addonModule.init(provider.getContext());
+                    DistExecutor.unsafeRunWhenOn(
+                            Dist.CLIENT,
+                            () -> () -> {
+                                addonModule.initClient(provider.getContext());
+                            }
+
+                    );
                 }
             } 
         }
@@ -48,8 +64,6 @@ public final class AddonModuleRegistry {
     public Set<AddonModule> getLoadedModules(){
         return this.loadedModules;
     }
-
-    
 
     Map<ResourceLocation, ForgeConfigSpec.BooleanValue> getCompatSettings() {
         return compats;

@@ -4,9 +4,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public abstract class AddonModuleProvider {
-    private Set<RawAddonModule> rawAddonModules = new HashSet<>();
+    private final Set<RawAddonModule> rawAddonModules = new HashSet<>();
+    private final FMLJavaModLoadingContext context;
+
+    public AddonModuleProvider(FMLJavaModLoadingContext context){
+        this.context = context;
+    }
+
+    public FMLJavaModLoadingContext getContext() {
+        return context;
+    }
 
     public abstract void registerRawModules();
 

@@ -63,6 +63,8 @@ public class RawAddonModule {
             AddonModule t = handlerClass.getDeclaredConstructor().newInstance();
             return LazyOptional.of(()->t);
         }catch(Exception e){
+            AddonAPI.LOGGER.error("Module {} loading failed", getName().toString());
+            AddonAPI.LOGGER.error("reason:", e);
             return LazyOptional.empty();
         }
     }
