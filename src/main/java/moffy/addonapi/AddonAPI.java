@@ -56,7 +56,7 @@ public class AddonAPI {
     }
 
     private void gatherData(GatherDataEvent event){
-        CraftingHelper.register(new ModsAvailableCondition.Serializer());
+        //CraftingHelper.register(new ModsAvailableCondition.Serializer());
     }
 
     @OnlyIn(Dist.CLIENT)    
