@@ -12,6 +12,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
 @Mod(AddonAPI.MODID)
@@ -28,10 +30,18 @@ public class AddonAPI {
         context.getModEventBus().addListener(this::enqueueIMC);
         context.getModEventBus().addListener(this::processIMC);
         context.getModEventBus().addListener(this::gatherData);
+        context.getModEventBus().addListener(this::registerRecipeSerializers);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, ()->()->{
             context.getModEventBus().addListener(this::clientSetup);
         });
-        CraftingHelper.register(new ModsAvailableCondition.Serializer());
+    }
+
+    private void registerRecipeSerializers(RegisterEvent event)
+    {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+        {
+            CraftingHelper.register(new ModsAvailableCondition.Serializer());
+        }
     }
 
     private void setup(final FMLCommonSetupEvent event)
@@ -56,7 +66,6 @@ public class AddonAPI {
     }
 
     private void gatherData(GatherDataEvent event){
-        //CraftingHelper.register(new ModsAvailableCondition.Serializer());
     }
 
     @OnlyIn(Dist.CLIENT)    
