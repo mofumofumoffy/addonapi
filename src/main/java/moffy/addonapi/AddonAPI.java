@@ -1,8 +1,10 @@
 package moffy.addonapi;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -15,6 +17,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.Set;
 
 @Mod(AddonAPI.MODID)
 public class AddonAPI {
@@ -46,21 +51,21 @@ public class AddonAPI {
 
     private void setup(final FMLCommonSetupEvent event)
     {
-        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules()){
+        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules().values()){
             module.setup(event);
         }
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)
     {
-        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules()){
+        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules().values()){
             module.enqueueIMC(event);
         }
     }
 
     private void processIMC(final InterModProcessEvent event)
     {
-        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules()){
+        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules().values()){
             module.processIMC(event);
         }
     }
@@ -70,8 +75,20 @@ public class AddonAPI {
 
     @OnlyIn(Dist.CLIENT)    
     private void clientSetup(final FMLClientSetupEvent event){
-        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules()){
+        for(AddonModule module : AddonModuleRegistry.INSTANCE.getLoadedModules().values()){
             module.clientSetup(event);
         }
+    }
+
+    public static boolean isModuleAvailable(ResourceLocation moduleName){
+        Map<ResourceLocation, AddonModule> loadedModules = AddonModuleRegistry.INSTANCE.getLoadedModules();
+        Map<ResourceLocation, ForgeConfigSpec.BooleanValue> compatSettings = AddonModuleRegistry.INSTANCE.getCompatSettings();
+
+        for(var loadedModule : loadedModules.entrySet()){
+            if(loadedModule.getKey().equals(moduleName)){
+                return compatSettings.get(moduleName).get();
+            }
+        }
+        return false;
     }
 }

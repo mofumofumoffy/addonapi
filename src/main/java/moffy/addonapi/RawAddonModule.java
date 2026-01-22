@@ -61,6 +61,7 @@ public class RawAddonModule {
     LazyOptional<AddonModule> loadNewModule(){
         try{
             AddonModule t = handlerClass.getDeclaredConstructor().newInstance();
+            AddonAPI.LOGGER. info("Loaded module {}", this.getName());
             return LazyOptional.of(()->t);
         }catch(Exception e){
             AddonAPI.LOGGER.error("Module {} loading failed", getName().toString());

@@ -18,11 +18,11 @@ public final class AddonModuleRegistry {
     public static final AddonModuleRegistry INSTANCE = new AddonModuleRegistry();
 
     private Set<AddonModuleProvider> providers;
-    private Set<AddonModule> loadedModules;
+    private Map<ResourceLocation, AddonModule> loadedModules;
     private Map<ResourceLocation, ForgeConfigSpec.BooleanValue> compats;
     
     public AddonModuleRegistry(){
-        loadedModules = new HashSet<>();
+        loadedModules = new HashMap<>();
         compats = new HashMap<>();
         providers = new HashSet<>();
     }
@@ -34,7 +34,7 @@ public final class AddonModuleRegistry {
         Set<RawAddonModule> rawModules = provider.getRawAddonModules();
 
         if(configBuilder != null){
-            configBuilder.comment("Provided by AddonAPI:", "Other Mod Compat Options").push("compat");
+            configBuilder.comment("Provided by AddonAPI:", "Module Options").push("modules");
             for(RawAddonModule rawAddonModule : rawModules){
                 if(!rawAddonModule.isMandatory()){
                     compats.put(rawAddonModule.getName(), configBuilder.define(rawAddonModule.getLabel(), true));
@@ -47,7 +47,8 @@ public final class AddonModuleRegistry {
                 LazyOptional<AddonModule> addonModuleOptional = rawAddonModule.loadNewModule();
                 if(addonModuleOptional.isPresent()){
                     AddonModule addonModule = addonModuleOptional.orElseThrow(IllegalStateException::new);
-                    loadedModules.add(addonModule);
+
+                    loadedModules.put(rawAddonModule.getName(), addonModule);
                     addonModule.init(provider.getContext());
                     DistExecutor.unsafeRunWhenOn(
                             Dist.CLIENT,
@@ -61,7 +62,7 @@ public final class AddonModuleRegistry {
         }
     }
 
-    public Set<AddonModule> getLoadedModules(){
+    public Map<ResourceLocation, AddonModule> getLoadedModules(){
         return this.loadedModules;
     }
 
