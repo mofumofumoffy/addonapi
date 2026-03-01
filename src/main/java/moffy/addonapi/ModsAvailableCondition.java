@@ -12,11 +12,10 @@ import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
 public class ModsAvailableCondition implements ICondition{
 
-    private final ResourceLocation name;
+    private final ResourceLocation name = new ResourceLocation(AddonAPI.MODID, "mods_available");
     private final ResourceLocation requiredRawModule;
 
-    public ModsAvailableCondition(ResourceLocation name, ResourceLocation requiredRawModule){
-        this.name = name;
+    public ModsAvailableCondition(ResourceLocation requiredRawModule){
         this.requiredRawModule = requiredRawModule;
     }
 
@@ -62,7 +61,7 @@ public class ModsAvailableCondition implements ICondition{
         @Override
         public ModsAvailableCondition read(JsonObject json) {
             String requiredRawModulePath = json.get("required_raw_module").getAsString();
-            return new ModsAvailableCondition(name, new ResourceLocation(requiredRawModulePath));
+            return new ModsAvailableCondition(new ResourceLocation(requiredRawModulePath));
         }
 
         @Override
