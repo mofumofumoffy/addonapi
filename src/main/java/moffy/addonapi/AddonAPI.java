@@ -86,7 +86,12 @@ public class AddonAPI {
 
         for(var loadedModule : loadedModules.entrySet()){
             if(loadedModule.getKey().equals(moduleName)){
-                return compatSettings.get(moduleName).get();
+                ForgeConfigSpec.BooleanValue compatConfig = compatSettings.get(moduleName);
+                if(compatConfig != null){
+                    return compatConfig.get();
+                } else {
+                    return true;
+                }
             }
         }
         return false;
