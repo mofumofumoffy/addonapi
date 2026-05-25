@@ -30,7 +30,7 @@ public final class AddonModuleRegistry {
         provider.registerRawModules();
         List<RawAddonModule> rawModules = provider.getRawAddonModules();
 
-        rawModules.sort(Comparator.comparingInt(RawAddonModule::getPriority));
+        rawModules.sort(Comparator.comparingInt(rawModule -> -rawModule.getPriority()));
 
         if(configBuilder != null){
             configBuilder.comment("Provided by AddonAPI:", "Module Options").push("modules");
