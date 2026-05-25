@@ -1,9 +1,6 @@
 package moffy.addonapi;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +28,9 @@ public final class AddonModuleRegistry {
 
         providers.add(provider);
         provider.registerRawModules();
-        Set<RawAddonModule> rawModules = provider.getRawAddonModules();
+        List<RawAddonModule> rawModules = provider.getRawAddonModules();
+
+        rawModules.sort(Comparator.comparingInt(RawAddonModule::getPriority));
 
         if(configBuilder != null){
             configBuilder.comment("Provided by AddonAPI:", "Module Options").push("modules");

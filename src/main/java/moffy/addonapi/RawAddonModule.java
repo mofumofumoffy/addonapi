@@ -6,21 +6,31 @@ import net.minecraftforge.fml.ModList;
 
 public class RawAddonModule {
     private ResourceLocation name;
-    private String label;
+    private final String label;
     private Class<? extends AddonModule> handlerClass;
     private String[] requiredModIds;
-    private boolean mandatory;
+    private final boolean mandatory;
+    private final int priority;
 
 
     public RawAddonModule(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds){
-        this(name, label, handlerClass, requiredModIds, false);
+        this(name, label, handlerClass, requiredModIds, 0, false);
+    }
+
+    public RawAddonModule(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds, int priority){
+        this(name, label, handlerClass, requiredModIds, priority, false);
     }
 
     public RawAddonModule(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds, boolean mandatory){
+        this(name, label, handlerClass, requiredModIds, 0, mandatory);
+    }
+
+    public RawAddonModule(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds, int priority, boolean mandatory){
         this.name = name;
         this.label = label;
         this.handlerClass = handlerClass;
         this.requiredModIds = requiredModIds;
+        this.priority = priority;
         this.mandatory = mandatory;
     }
 
@@ -32,7 +42,9 @@ public class RawAddonModule {
         return name;
     }
 
-
+    public int getPriority() {
+        return priority;
+    }
 
     public void setName(ResourceLocation name) {
         this.name = name;
@@ -79,5 +91,39 @@ public class RawAddonModule {
 
     public String getLabel() {
         return label;
+    }
+
+    public static Builder builder(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds){
+        return new Builder(name, label, handlerClass, requiredModIds);
+    }
+
+    public static final class Builder{
+        private final ResourceLocation name;
+        private final String label;
+        private final Class<? extends AddonModule> handlerClass;
+        private final String[] requiredModIds;
+        private boolean mandatory = false;
+        private int priority = 0;
+
+        public Builder(ResourceLocation name, String label, Class<? extends AddonModule> handlerClass, String[] requiredModIds){
+            this.name = name;
+            this.label = label;
+            this.handlerClass = handlerClass;
+            this.requiredModIds = requiredModIds;
+        }
+
+        public Builder mandatory(){
+            mandatory = true;
+            return this;
+        }
+
+        public Builder setPriority(int priority){
+            this.priority = priority;
+            return this;
+        }
+
+        public RawAddonModule build(){
+            return new RawAddonModule(name, label, handlerClass, requiredModIds, priority, mandatory);
+        }
     }
 }

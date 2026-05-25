@@ -1,13 +1,15 @@
 package moffy.addonapi;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public abstract class AddonModuleProvider {
-    private final Set<RawAddonModule> rawAddonModules = new HashSet<>();
+    private final List<RawAddonModule> rawAddonModules = new ArrayList<>();
     private final FMLJavaModLoadingContext context;
 
     public AddonModuleProvider(FMLJavaModLoadingContext context){
@@ -21,14 +23,26 @@ public abstract class AddonModuleProvider {
     public abstract void registerRawModules();
 
     public void addRawModule(String name, String label, Class<? extends AddonModule> moduleClass, String[] requiredModIDs){
-        this.rawAddonModules.add(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs));
+        addRawModule(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs));
+    }
+
+    public void addRawModule(String name, String label, Class<? extends AddonModule> moduleClass, String[] requiredModIDs, int priority){
+        addRawModule(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs, priority));
     }
 
     public void addRawModule(String name, String label, Class<? extends AddonModule> moduleClass, String[] requiredModIDs, boolean mandatory){
-        this.rawAddonModules.add(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs));
+        addRawModule(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs, mandatory));
     }
 
-    Set<RawAddonModule> getRawAddonModules() {
+    public void addRawModule(String name, String label, Class<? extends AddonModule> moduleClass, String[] requiredModIDs, int priority, boolean mandatory){
+        addRawModule(new RawAddonModule(new ResourceLocation(getModId(), name), label, moduleClass, requiredModIDs, priority, mandatory));
+    }
+
+    public void addRawModule(RawAddonModule rawModule){
+        this.rawAddonModules.add(rawModule);
+    }
+
+    List<RawAddonModule> getRawAddonModules() {
         return this.rawAddonModules;
     }
 
