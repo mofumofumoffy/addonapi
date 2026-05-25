@@ -15,6 +15,10 @@ public class ModsAvailableCondition implements ICondition{
     private final ResourceLocation name = new ResourceLocation(AddonAPI.MODID, "mods_available");
     private final ResourceLocation requiredRawModule;
 
+    public ModsAvailableCondition(ResourceLocation ignored, ResourceLocation requiredRawModule){
+        this(requiredRawModule);
+    }
+
     public ModsAvailableCondition(ResourceLocation requiredRawModule){
         this.requiredRawModule = requiredRawModule;
     }
