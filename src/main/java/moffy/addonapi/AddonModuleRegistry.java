@@ -47,7 +47,7 @@ public final class AddonModuleRegistry {
         });
     }
 
-    public void localClientModule(AddonModuleProvider provider, @Nullable ModConfigSpec.Builder configBuilder){
+    public void loadClientModule(AddonModuleProvider provider, @Nullable ModConfigSpec.Builder configBuilder){
 
         loadModule(provider,configBuilder,(rawAddonModule) -> {
             Optional<ClientAddonModule> addonModuleOptional = rawAddonModule.loadNewClientModule();
