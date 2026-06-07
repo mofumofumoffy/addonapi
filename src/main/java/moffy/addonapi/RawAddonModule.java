@@ -123,12 +123,12 @@ public final class RawAddonModule {
             this.requiredModIds = requiredModIds;
         }
 
-        public Builder setCommonModule(Class<CommonAddonModule> commonModuleClass){
+        public Builder setCommonModule(Class<? extends CommonAddonModule> commonModuleClass){
             this.commonHandlerClass = commonModuleClass;
             return this;
         }
 
-        public Builder setClientModule(Class<ClientAddonModule> clientModuleClass){
+        public Builder setClientModule(Class<? extends ClientAddonModule> clientModuleClass){
             this.clientHandlerClass = clientModuleClass;
             return this;
         }
