@@ -1,6 +1,5 @@
 package moffy.addonapi;
 
-import moffy.addonapi.modules.AddonModule;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 

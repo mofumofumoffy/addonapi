@@ -1,6 +1,5 @@
 package moffy.addonapi;
 
-import moffy.addonapi.modules.AddonModule;
 import moffy.addonapi.modules.ClientAddonModule;
 import moffy.addonapi.modules.CommonAddonModule;
 import net.minecraft.resources.ResourceLocation;
@@ -48,6 +47,14 @@ public final class AddonModuleRegistry {
     }
 
     public void loadClientModule(AddonModuleProvider provider, @Nullable ModConfigSpec.Builder configBuilder){
+        if(configBuilder != null){
+            configBuilder.comment("Provided by AddonAPI:", "Module Options").push("modules");
+            for(RawAddonModule rawAddonModule : provider.getRawAddonModules()){
+                if(!rawAddonModule.isMandatory()){
+                    compats.put(rawAddonModule.getName(), configBuilder.define(rawAddonModule.getLabel(), true));
+                }
+            }
+        }
 
         loadModule(provider,configBuilder,(rawAddonModule) -> {
             Optional<ClientAddonModule> addonModuleOptional = rawAddonModule.loadNewClientModule();

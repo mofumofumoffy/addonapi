@@ -4,6 +4,6 @@ import net.neoforged.api.distmarker.Dist;
 
 import javax.annotation.Nullable;
 
-public interface AddonModule {
+interface AddonModule {
     @Nullable Dist getDist();
 }

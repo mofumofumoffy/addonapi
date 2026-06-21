@@ -1,6 +1,5 @@
 package moffy.addonapi;
 
-import moffy.addonapi.modules.AddonModule;
 import moffy.addonapi.modules.ClientAddonModule;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
