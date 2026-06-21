@@ -1,6 +1,5 @@
 package moffy.addonapi;
 
-import moffy.addonapi.modules.AddonModule;
 import moffy.addonapi.modules.ClientAddonModule;
 import moffy.addonapi.modules.CommonAddonModule;
 import net.minecraft.resources.ResourceLocation;
@@ -14,10 +13,10 @@ public final class RawAddonModule {
     private final String label;
 
     @Nullable
-    private Class<? extends CommonAddonModule> commonHandlerClass;
+    private final Class<? extends CommonAddonModule> commonHandlerClass;
 
     @Nullable
-    private Class<? extends ClientAddonModule> clientHandlerClass;
+    private final Class<? extends ClientAddonModule> clientHandlerClass;
 
     private final String[] requiredModIds;
     private final boolean mandatory;
